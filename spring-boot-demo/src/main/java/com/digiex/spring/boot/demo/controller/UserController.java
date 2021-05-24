@@ -13,12 +13,10 @@ import com.digiex.spring.boot.demo.entity.User;
 import com.digiex.spring.boot.demo.helper.UserHelper;
 import com.digiex.spring.boot.demo.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -46,38 +44,10 @@ public class UserController extends AbstractBaseController{
             @RequestBody CreateUserRequest createUserRequest
     ){
         // Should validate existed before create new user
-        if (userService.existsByUsername(createUserRequest.getUsername()))
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Username already exists");
-        if (userService.existsByUsername(createUserRequest.getEmail()))
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Email already exists");
-        String regex = "^(.+)@(.+)$";
-        Pattern pattern = Pattern.compile(regex);
-        if (!pattern.matcher(createUserRequest.getEmail()).matches())
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Email format is wrong");
-        if (createUserRequest.getUsername().isEmpty())
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Username is empty");
-        if (createUserRequest.getEmail().isEmpty())
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Email is empty");
-        if (createUserRequest.getFirstName().isEmpty())
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "First name is empty");
-        if (createUserRequest.getLastName().isEmpty())
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Last name is empty");
-        if (createUserRequest.getLang().isEmpty())
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Lang is empty");
-        if (createUserRequest.getPasswordHash().isEmpty())
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Password hash is empty");
-        if (createUserRequest.getUsername().length() > 100)
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Username is too long");
-        if (createUserRequest.getEmail().length() > 255)
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Email is too long");
-        if (createUserRequest.getFirstName().length() > 100)
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "First name is too long");
-        if (createUserRequest.getLastName().length() > 100)
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Last name is too long");
-        if (createUserRequest.getLang().length() > 5)
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Lang is too long");
-        if (createUserRequest.getPasswordHash().length() > 100)
-            throw new ApplicationException(APIStatus.BAD_PARAMS, "Password hash is too long");
+        createUserRequest.checkNullAndEmptyValue();
+        createUserRequest.checkLengthValue();
+        createUserRequest.checkEmailFormat();
+        createUserRequest.checkExistenceUsernameOrEmail(userService);
         User user = userHelper.createUser(createUserRequest);
         userService.saveUser(user);
         return responseUtil.successResponse(user) ;
@@ -109,6 +79,8 @@ public class UserController extends AbstractBaseController{
     public ResponseEntity<RestAPIResponse> getUser(
             @PathVariable String id
     ){
+        if (!userService.existsById(id))
+            throw new ApplicationException(APIStatus.NOT_FOUND, "The user id does not exist");
         User user = userService.getUser(id);
         if (user == null){
             throw new ApplicationException(APIStatus.NOT_FOUND, "User not found");
@@ -128,6 +100,8 @@ public class UserController extends AbstractBaseController{
             @PathVariable String id,
             HttpServletRequest request
     ){
+        if (!userService.existsById(id))
+            throw new ApplicationException(APIStatus.NOT_FOUND, "The user id does not exist");
         User user = userService.getUser(id);
         if (user == null){
             throw new ApplicationException(APIStatus.NOT_FOUND);
@@ -145,6 +119,8 @@ public class UserController extends AbstractBaseController{
     public ResponseEntity<RestAPIResponse> deleteUser(
             @PathVariable String id
     ){
+        if (!userService.existsById(id))
+            throw new ApplicationException(APIStatus.NOT_FOUND, "The user id does not exist");
         User user = userService.getUser(id);
         if (user == null){
             throw new ApplicationException(APIStatus.NOT_FOUND);
