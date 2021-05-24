@@ -24,4 +24,8 @@ public interface UserService {
     void deleteUser(User user);
 
     User getUserByUsernameOrEmail(String userName, String email);
+
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    boolean existsById(String id);
 }

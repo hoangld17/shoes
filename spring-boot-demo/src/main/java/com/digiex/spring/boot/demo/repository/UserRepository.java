@@ -19,4 +19,7 @@ import javax.transaction.Transactional;
 @Transactional
 public interface UserRepository extends PagingAndSortingRepository<User, String> {
     User findOneById(String id);
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    boolean existsById(String id);
 }

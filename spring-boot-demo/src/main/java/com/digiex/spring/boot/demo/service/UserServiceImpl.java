@@ -48,4 +48,19 @@ public class UserServiceImpl implements UserService{
     public User getUserByUsernameOrEmail(String userName, String email) {
         return null;
     }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsById(String id) {
+        return userRepository.existsById(id);
+    }
 }

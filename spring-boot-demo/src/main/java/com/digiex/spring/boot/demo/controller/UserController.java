@@ -14,19 +14,17 @@ import com.digiex.spring.boot.demo.helper.UserHelper;
 import com.digiex.spring.boot.demo.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  *
  * @author Quy Duong
  */
-@Controller
+@RestController
 @RequestMapping(APIName.USER_API)
 public class UserController extends AbstractBaseController{
     
@@ -48,6 +46,38 @@ public class UserController extends AbstractBaseController{
             @RequestBody CreateUserRequest createUserRequest
     ){
         // Should validate existed before create new user
+        if (userService.existsByUsername(createUserRequest.getUsername()))
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Username already exists");
+        if (userService.existsByUsername(createUserRequest.getEmail()))
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Email already exists");
+        String regex = "^(.+)@(.+)$";
+        Pattern pattern = Pattern.compile(regex);
+        if (!pattern.matcher(createUserRequest.getEmail()).matches())
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Email format is wrong");
+        if (createUserRequest.getUsername().isEmpty())
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Username is empty");
+        if (createUserRequest.getEmail().isEmpty())
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Email is empty");
+        if (createUserRequest.getFirstName().isEmpty())
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "First name is empty");
+        if (createUserRequest.getLastName().isEmpty())
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Last name is empty");
+        if (createUserRequest.getLang().isEmpty())
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Lang is empty");
+        if (createUserRequest.getPasswordHash().isEmpty())
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Password hash is empty");
+        if (createUserRequest.getUsername().length() > 100)
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Username is too long");
+        if (createUserRequest.getEmail().length() > 255)
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Email is too long");
+        if (createUserRequest.getFirstName().length() > 100)
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "First name is too long");
+        if (createUserRequest.getLastName().length() > 100)
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Last name is too long");
+        if (createUserRequest.getLang().length() > 5)
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Lang is too long");
+        if (createUserRequest.getPasswordHash().length() > 100)
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Password hash is too long");
         User user = userHelper.createUser(createUserRequest);
         userService.saveUser(user);
         return responseUtil.successResponse(user) ;

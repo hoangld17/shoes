@@ -67,7 +67,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // allow CORS option calls
                 .antMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
                 .antMatchers(
-                        "/api/*"
+                        "/api/*","/api/user/*"
                 ).permitAll() // All other request must be specify token
                 .anyRequest().authenticated();
 
