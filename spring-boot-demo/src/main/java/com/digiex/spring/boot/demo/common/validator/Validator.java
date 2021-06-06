@@ -1,8 +1,13 @@
 package com.digiex.spring.boot.demo.common.validator;
 
 import com.digiex.spring.boot.demo.common.exception.ApplicationException;
+import com.digiex.spring.boot.demo.common.util.Constant;
 import com.digiex.spring.boot.demo.controller.model.APIStatus;
+import org.apache.commons.validator.routines.DateValidator;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -77,7 +82,7 @@ public class Validator {
      */
     public static void notNullAndNotEmpty(Object obj, APIStatus apiStatus, String message) {
 
-        if (obj == null || "".equals(obj)) {
+        if (obj == null || "".equals(obj.toString().trim())) {
             throw new ApplicationException(apiStatus, message);
         }
     }
@@ -158,5 +163,28 @@ public class Validator {
             throw new ApplicationException(APIStatus.BAD_REQUEST, "Value " + value + " was not in " + containList.toString());
         }
     }
+
+
+    public static Date convertDate(String date, String fieldName) {
+        if (date == null || date.isBlank())
+            throw new ApplicationException(APIStatus.BAD_PARAMS, fieldName+" is empty or null!");
+        date = date.trim();
+        if (!DateValidator.getInstance().isValid(date, Constant.API_FORMAT_DATE))
+            throw new ApplicationException(APIStatus.BAD_PARAMS, fieldName+" is wrong format date!");
+        try {
+            return new SimpleDateFormat(Constant.API_FORMAT_DATE).parse(date);
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    public static void checkNullEmptyAndLength(String text, int length, String fieldName) {
+        if (text == null || text.isBlank())
+            throw new ApplicationException(APIStatus.BAD_PARAMS, fieldName+" is empty or null!");
+        text = text.trim();
+        if (text.length() > length)
+            throw new ApplicationException(APIStatus.BAD_PARAMS, "Maximum "+fieldName+" is "+length+" characters.");
+    }
+
 
 }

@@ -7,6 +7,7 @@ package com.digiex.spring.boot.demo.entity;
 
 import com.digiex.spring.boot.demo.common.enums.AppStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -31,7 +33,7 @@ import java.util.Date;
 @Entity
 @Table(name = "user")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class User implements Serializable {
+public class User extends AuditableDomain implements Serializable {
     
     @Id
     private String id;
@@ -39,9 +41,29 @@ public class User implements Serializable {
     private String email;
     private String firstName;
     private String lastName;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passwordHash;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String passwordSalt;
     private String lang;
     private AppStatus status;
     private Date createdDate;
+    @OneToMany(mappedBy = "user")
+    private List<Address> addresses;
+
+//    @Override
+//    public String toString() {
+//        return "User{" +
+//                "id='" + id + '\'' +
+//                ", username='" + username + '\'' +
+//                ", email='" + email + '\'' +
+//                ", firstName='" + firstName + '\'' +
+//                ", lastName='" + lastName + '\'' +
+//                ", passwordHash='" + passwordHash + '\'' +
+//                ", passwordSalt='" + passwordSalt + '\'' +
+//                ", lang='" + lang + '\'' +
+//                ", status=" + status +
+//                ", createdDate=" + createdDate +
+//                '}';
+//    }
 }

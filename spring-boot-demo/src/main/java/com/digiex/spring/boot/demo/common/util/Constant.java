@@ -15,6 +15,10 @@ public interface Constant {
 
     int SALT_LENGTH = 6;
 
+    String SORT_BY_USER_NAME = "userName";
+    String SORT_BY_EMAIL = "email";
+    String SORT_BY_LAST_NAME = "lastName";
+    String SORT_BY_FIRST_NAME = "firstName";
 }
 
 

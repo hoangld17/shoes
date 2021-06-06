@@ -5,8 +5,11 @@
  */
 package com.digiex.spring.boot.demo.service;
 
+import com.digiex.spring.boot.demo.common.enums.AppStatus;
 import com.digiex.spring.boot.demo.entity.User;
+import org.springframework.data.domain.Page;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -17,7 +20,7 @@ public interface UserService {
     
     User saveUser(User user);
     
-    User getUser(String id);
+    User getUserById(String id);
     
     List<User> getAllUser();
     
@@ -26,6 +29,20 @@ public interface UserService {
     User getUserByUsernameOrEmail(String userName, String email);
 
     boolean existsByUsername(String username);
+
     boolean existsByEmail(String email);
+
     boolean existsById(String id);
+
+    User getByEmail(String email );
+
+    User getByUsername(String userName );
+
+    Page<User> getUserPaging(String search, int page, int size, boolean sort, String sortField);
+
+    List<User> getByLastNameOrFirstNameOrCreatDate(String fistName, String lastName, Date startDate, Date endDate);
+
+    List<User> getByLastNameOrFirstName(String fistName, String lastName);
+
+    Page<User> getAllUser(String firstName, String lastName, Date startDate, Date endDate, String searchKey, String sortField, boolean ascSort, int page, int size);
 }

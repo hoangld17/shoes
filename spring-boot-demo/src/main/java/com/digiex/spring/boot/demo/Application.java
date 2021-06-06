@@ -1,6 +1,7 @@
 package com.digiex.spring.boot.demo;
 
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
@@ -13,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import springfox.documentation.swagger2.mappers.ModelMapper;
 
 /**
  * @author DiGiEx
@@ -41,8 +41,10 @@ public class Application extends SpringBootServletInitializer {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper() {};
+        return new ModelMapper();
     }
+
+
 
     @Bean(name = "taskExecutor")
     public Executor taskExecutor() {

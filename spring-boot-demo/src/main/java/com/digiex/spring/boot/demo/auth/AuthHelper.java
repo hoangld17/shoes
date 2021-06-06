@@ -32,7 +32,7 @@ public class AuthHelper {
         if (DateUtil.convertToUTC(new Date()).getTime() >= session.getExpiryDate().getTime()) {
             throw new ApplicationException(APIStatus.UNAUTHORIZED);
         }
-        User user = userService.getUser(session.getId());
+        User user = userService.getUserById(session.getId());
         Validator.notNull(user, APIStatus.UNAUTHORIZED);
 
         return new AuthUser(user);

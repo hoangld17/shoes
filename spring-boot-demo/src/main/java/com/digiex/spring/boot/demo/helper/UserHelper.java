@@ -27,12 +27,14 @@ public class UserHelper {
      * @return
      */
     public User createUser(CreateUserRequest createUserRequest) {
+
         User user = new User();
+
         user.setId(UniqueID.getUUID());
-        user.setUsername(createUserRequest.getUsername());
-        user.setEmail(createUserRequest.getEmail());
-        user.setFirstName(createUserRequest.getFirstName());
-        user.setLastName(createUserRequest.getLastName());
+        user.setUsername(createUserRequest.getUsername().trim());
+        user.setEmail(createUserRequest.getEmail().trim());
+        user.setFirstName(createUserRequest.getFirstName().trim());
+        user.setLastName(createUserRequest.getLastName().trim());
         user.setLang((!"".equals(createUserRequest.getLang())) ? createUserRequest.getLang() : "en");
         String passwordSalt = AppUtil.generateSalt();
         user.setPasswordSalt(passwordSalt);
